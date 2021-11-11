@@ -1,0 +1,27 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#world {
+  padding-bottom: 10px;
+}
+
+#world td {
+  border: 1px solid darkgray;
+  width: 10px;
+  height: 10px;
+}
+
+#world td.dead {
+  background-color: transparent;
+}
+
+#world td.alive {
+  background-color: #7cab3c;
+}
