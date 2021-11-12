@@ -6,11 +6,11 @@ import Cell from "./Cell.js";
 export class World extends React.Component {
   constructor(props) {
     super(props);
+    this.timer = false;
     this.state = {
       currGen: this.createGenArray(),
       nextGen: this.createGenArray(),
       started: false,
-      timer: null,
     };
   }
 
@@ -135,13 +135,9 @@ export class World extends React.Component {
     }
     this.setState({ currGen: currGen, nextGen: nextGen });
     if (this.state.started) {
-      this.setState({
-        currGen: currGen,
-        nextGen: nextGen,
-        timer: setTimeout(this.evolve(), this.props.evolutionSpeed),
-      });
+      this.timer = setTimeout(this.evolve(), this.props.evolutionSpeed);
     } else {
-      this.setState({ currGen: currGen, nextGen: nextGen });
+      clearTimeout(this.timer);
     }
   }
 
@@ -158,6 +154,9 @@ export class World extends React.Component {
   }
 
   render() {
+    if (this.state.started) {
+      this.evolve();
+    }
     return (
       <tbody key="worldTbody">
         {Array.from({ length: this.props.rows }).map((_, i) => (
