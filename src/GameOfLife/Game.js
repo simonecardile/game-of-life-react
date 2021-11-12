@@ -4,6 +4,8 @@ import ReactDOM from "react-dom";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 import World from "./World.js";
 
@@ -22,17 +24,39 @@ export class Game extends React.Component {
       evolution: !this.state.evolution,
     });
   }
+  reset() {
+    console.log("reset");
+    this.setState({
+      evolution: false,
+    });
+  }
   render() {
     return (
       <Container>
-        <Button
-          type="button"
-          variant="primary"
-          onClick={() => this.startStop()}
-        >
-          {this.state.evolution ? "Stop" : "Start"}
-        </Button>
-        <Table responsive id="world">
+        <h1>Game of Life</h1>
+        <Row className="text-center mt-2">
+          <Col>
+            <Button
+              as="input"
+              type="button"
+              variant="primary"
+              onClick={() => this.startStop()}
+              value={
+                this.state.evolution ? "Stop Reproducing" : "Start Reproducing"
+              }
+            />
+          </Col>
+          <Col>
+            <Button
+              as="input"
+              type="button"
+              variant="secondary"
+              onClick={() => this.reset()}
+              value="Reset World"
+            />
+          </Col>
+        </Row>
+        <Table responsive id="world" className="mt-3">
           <World
             rows={this.state.rows}
             cols={this.state.cols}

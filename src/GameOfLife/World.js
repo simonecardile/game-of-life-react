@@ -26,13 +26,8 @@ export class World extends React.Component {
 
   cellClick(row, col) {
     let currGen = this.state.currGen;
-    if (this.state.currGen[row][col] == 1) {
-      currGen[row][col] = 0;
-      this.setState({ currGen: currGen });
-    } else {
-      currGen[row][col] = 1;
-      this.setState({ currGen: currGen });
-    }
+    currGen[row][col] = this.state.currGen[row][col] == 1 ? 0 : 1;
+    this.setState({ currGen: currGen });
   }
 
   getNeighborCount(row, col) {
@@ -150,21 +145,25 @@ export class World extends React.Component {
     );
   }
 
+  renderCols(row) {
+    return Array.from({ length: this.props.cols }).map((_, col) =>
+      this.renderCell(row, col)
+    );
+  }
+
+  renderRows() {
+    return Array.from({ length: this.props.rows }).map((_, row) => (
+      <tr key={row} id={row}>
+        {this.renderCols(row)}
+      </tr>
+    ));
+  }
+
   render() {
     if (this.props.evolution) {
       this.evolve();
     }
-    return (
-      <tbody key="worldTbody">
-        {Array.from({ length: this.props.rows }).map((_, i) => (
-          <tr key={i} id={i}>
-            {Array.from({ length: this.props.cols }).map((_, j) =>
-              this.renderCell(i, j)
-            )}
-          </tr>
-        ))}
-      </tbody>
-    );
+    return <tbody key="worldTbody">{this.renderRows()}</tbody>;
   }
 }
 
