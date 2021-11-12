@@ -10,7 +10,6 @@ export class World extends React.Component {
     this.state = {
       currGen: this.createGenArray(),
       nextGen: this.createGenArray(),
-      started: false,
     };
   }
 
@@ -29,10 +28,10 @@ export class World extends React.Component {
     let currGen = this.state.currGen;
     if (this.state.currGen[row][col] == 1) {
       currGen[row][col] = 0;
-      this.setState({ currGen: currGen, started: true });
+      this.setState({ currGen: currGen });
     } else {
       currGen[row][col] = 1;
-      this.setState({ currGen: currGen, started: true });
+      this.setState({ currGen: currGen });
     }
   }
 
@@ -133,12 +132,10 @@ export class World extends React.Component {
         nextGen[row][col] = 0;
       }
     }
-    this.setState({ currGen: currGen, nextGen: nextGen });
-    if (this.state.started) {
-      this.timer = setTimeout(this.evolve(), this.props.evolutionSpeed);
-    } else {
-      clearTimeout(this.timer);
-    }
+    this.timer = setTimeout(
+      () => this.setState({ currGen: currGen, nextGen: nextGen }), // Perché così funziona?
+      this.props.evolutionSpeed
+    );
   }
 
   renderCell(row, col) {
@@ -154,7 +151,7 @@ export class World extends React.Component {
   }
 
   render() {
-    if (this.state.started) {
+    if (this.props.evolution) {
       this.evolve();
     }
     return (
