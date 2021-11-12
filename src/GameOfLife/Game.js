@@ -7,9 +7,12 @@ import World from "./World.js";
 
 export class Game extends React.Component {
   render() {
+    const rows = 40;
+    const cols = 40;
+    const evolutionSpeed = 2000;
     return (
       <Table responsive id="world">
-        <World rows="5" cols="5" />
+        <World rows={rows} cols={cols} evolutionSpeed={evolutionSpeed} />
       </Table>
     );
   }

@@ -6,7 +6,7 @@ export class Cell extends React.Component {
     return (
       <td
         id={this.props.row + "_" + this.props.col}
-        className={this.props.state == 0 ? "dead" : "alive"}
+        className={this.props.alive == 1 ? "alive" : "dead"}
         onClick={this.props.onClick}
       ></td>
     );

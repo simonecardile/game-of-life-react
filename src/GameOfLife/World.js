@@ -6,39 +6,157 @@ import Cell from "./Cell.js";
 export class World extends React.Component {
   constructor(props) {
     super(props);
-    this.currGen = [this.props.rows];
-    this.nextGen = [this.props.rows];
-    for (let i = 0; i < this.props.rows; i++) {
-      this.currGen[i] = [this.props.cols];
-      this.nextGen[i] = [this.props.cols];
-    }
-    for (let i = 0; i < this.props.rows; i++) {
-      for (let j = 0; j < this.props.cols; j++) {
-        this.currGen[i][j] = 0;
-        this.nextGen[i][j] = 0;
+    this.state = {
+      currGen: this.createGenArray(),
+      nextGen: this.createGenArray(),
+      started: false,
+      timer: null,
+    };
+  }
+
+  createGenArray() {
+    let genArray = new Array(this.props.rows);
+    for (let i = 0; i < genArray.length; i++) {
+      genArray[i] = new Array(this.props.cols);
+      for (let j = 0; j < genArray[i].length; j++) {
+        genArray[i][j] = 0;
       }
     }
+    return genArray;
   }
+
   cellClick(row, col) {
-    if (this.currGen[row][col] == 0) {
-      this.currGen[row][col] = 1;
+    let currGen = this.state.currGen;
+    if (this.state.currGen[row][col] == 1) {
+      currGen[row][col] = 0;
+      this.setState({ currGen: currGen, started: true });
     } else {
-      this.currGen[row][col] = 0;
+      currGen[row][col] = 1;
+      this.setState({ currGen: currGen, started: true });
     }
-    // Perchè se non uso forceUpdate non si aggiornano le celle?
-    this.forceUpdate();
   }
-  renderCell(i, j) {
+
+  getNeighborCount(row, col) {
+    let count = 0;
+    let nrow = Number(row);
+    let ncol = Number(col);
+    // SE NO prima riga
+    if (nrow - 1 >= 0) {
+      // Check cella sopra
+      if (this.state.currGen[nrow - 1][ncol] == 1) {
+        count++;
+      }
+      // SE NO prima colonna
+      if (ncol - 1 >= 0) {
+        // Check cella in alto sinistra
+        if (this.state.currGen[nrow - 1][ncol - 1] == 1) {
+          count++;
+        }
+      }
+      // SE NO ultima colonna
+      if (ncol + 1 < this.props.cols) {
+        // Check cella in alto a destra
+        if (this.state.currGen[nrow - 1][ncol + 1] == 1) {
+          count++;
+        }
+      }
+    }
+    // SE NO ultima riga
+    if (nrow + 1 < this.props.rows) {
+      // Check cella sotto
+      if (this.state.currGen[nrow + 1][ncol] == 1) {
+        count++;
+      }
+      // SE NO prima colonna
+      if (ncol - 1 >= 0) {
+        // Check cella in basso a sinistra
+        if (this.state.currGen[nrow + 1][ncol - 1] == 1) {
+          count++;
+        }
+      }
+      // SE NO ultima colonna
+      if (ncol + 1 < this.props.cols) {
+        // Check cella in basso a destra
+        if (this.state.currGen[nrow + 1][ncol + 1] == 1) {
+          count++;
+        }
+      }
+    }
+    // SE NO prima colonna
+    if (ncol - 1 >= 0) {
+      // Check cella a sinistra
+      if (this.state.currGen[nrow][ncol - 1] == 1) {
+        count++;
+      }
+    }
+    // SE NO ultima colonna
+    if (ncol + 1 < this.props.cols) {
+      // Check cella a destra
+      if (this.state.currGen[nrow][ncol + 1] == 1) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  evolve() {
+    let currGen = this.state.currGen;
+    let nextGen = this.state.nextGen;
+    // Applicazione delle regole
+    for (let row in this.state.currGen) {
+      for (let col in this.state.currGen[row]) {
+        let neighbors = this.getNeighborCount(row, col);
+        // Regole
+        if (this.state.currGen[row][col] == 1) {
+          // SE la cella è viva
+          if (neighbors < 2) {
+            nextGen[row][col] = 0;
+          } else if (neighbors == 2 || neighbors == 3) {
+            nextGen[row][col] = 1;
+          } else if (neighbors > 3) {
+            nextGen[row][col] = 0;
+          }
+        } else if (this.state.currGen[row][col] == 0) {
+          // SE la cella è morta
+          if (neighbors == 3) {
+            nextGen[row][col] = 1;
+          }
+        }
+      }
+    }
+    // Aggiornamento della generazione corrente sulla base della nuova
+    for (let row in currGen) {
+      for (let col in currGen[row]) {
+        // Aggiornamento la generazione corrente con i dati della nuova
+        currGen[row][col] = nextGen[row][col];
+        // Reset della nuova generazione
+        nextGen[row][col] = 0;
+      }
+    }
+    this.setState({ currGen: currGen, nextGen: nextGen });
+    if (this.state.started) {
+      this.setState({
+        currGen: currGen,
+        nextGen: nextGen,
+        timer: setTimeout(this.evolve(), this.props.evolutionSpeed),
+      });
+    } else {
+      this.setState({ currGen: currGen, nextGen: nextGen });
+    }
+  }
+
+  renderCell(row, col) {
     return (
       <Cell
-        key={i + "_" + j}
-        row={i}
-        col={j}
-        state={this.currGen[i][j]}
-        onClick={() => this.cellClick(i, j)}
+        key={row + "_" + col}
+        row={row}
+        col={col}
+        alive={this.state.currGen[row][col]}
+        onClick={() => this.cellClick(row, col)}
       />
     );
   }
+
   render() {
     return (
       <tbody key="worldTbody">
