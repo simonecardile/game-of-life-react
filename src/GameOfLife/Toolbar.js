@@ -8,7 +8,7 @@ import Button from "react-bootstrap/Button";
 export class Toolbar extends React.Component {
   render() {
     return (
-      <Row className="text-center mt-2">
+      <Row className="text-center mt-3 mb-3">
         <Col>
           <Button
             as="input"

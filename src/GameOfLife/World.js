@@ -38,7 +38,7 @@ export class World extends React.Component {
 
   render() {
     return (
-      <Table responsive id="world" className="mt-3">
+      <Table responsive id="world">
         {this.renderBody()}
       </Table>
     );

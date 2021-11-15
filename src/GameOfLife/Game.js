@@ -23,14 +23,14 @@ export class Game extends React.Component {
   }
 
   createGenerationArray(rows, cols) {
-    let newGeneration = new Array(rows);
-    for (let row = 0; row < newGeneration.length; row++) {
-      newGeneration[row] = new Array(cols);
-      for (let col = 0; col < newGeneration[row].length; col++) {
-        newGeneration[row][col] = 0;
+    let generationArray = new Array(rows);
+    for (let row = 0; row < generationArray.length; row++) {
+      generationArray[row] = new Array(cols);
+      for (let col = 0; col < generationArray[row].length; col++) {
+        generationArray[row][col] = Math.round(Math.random() * 1); // 0
       }
     }
-    return newGeneration;
+    return generationArray;
   }
 
   getNeighborCount(row, col) {
